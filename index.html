@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Калькулятор-хаос (50% ошибок)</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: #f0f0f0;
+            margin: 0;
+        }
+        .calculator {
+            background-color: #fff;
+            border-radius: 10px;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            width: 300px;
+        }
+        .display {
+            background-color: #f8f8f8;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            padding: 10px;
+            margin-bottom: 10px;
+            text-align: right;
+            font-size: 24px;
+            height: 40px;
+        }
+        .buttons {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 10px;
+        }
+        button {
+            background-color: #4CAF50;
+            border: none;
+            border-radius: 5px;
+            color: white;
+            padding: 15px;
+            text-align: center;
+            text-decoration: none;
+            display: inline-block;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+        .equals {
+            background-color: #f44336;
+            grid-column: span 4;
+        }
+        .equals:hover {
+            background-color: #d32f2f;
+        }
+    </style>
+</head>
+<body>
+    <div class="calculator">
+        <div class="display" id="display">0</div>
+        <div class="buttons">
+            <button onclick="appendToDisplay('7')">7</button>
+            <button onclick="appendToDisplay('8')">8</button>
+            <button onclick="appendToDisplay('9')">9</button>
+            <button onclick="appendToDisplay('/')">/</button>
+            <button onclick="appendToDisplay('4')">4</button>
+            <button onclick="appendToDisplay('5')">5</button>
+            <button onclick="appendToDisplay('6')">6</button>
+            <button onclick="appendToDisplay('*')">*</button>
+            <button onclick="appendToDisplay('1')">1</button>
+            <button onclick="appendToDisplay('2')">2</button>
+            <button onclick="appendToDisplay('3')">3</button>
+            <button onclick="appendToDisplay('-')">-</button>
+            <button onclick="appendToDisplay('0')">0</button>
+            <button onclick="appendToDisplay('.')">.</button>
+            <button onclick="clearDisplay()">C</button>
+            <button onclick="appendToDisplay('+')">+</button>
+            <button class="equals" onclick="calculate()">=</button>
+        </div>
+    </div>
+
+    <script>
+        let display = document.getElementById('display');
+        let currentInput = '0';
+        let shouldReset = false;
+
+        function appendToDisplay(value) {
+            if (currentInput === '0' || shouldReset) {
+                currentInput = '';
+                shouldReset = false;
+            }
+            currentInput += value;
+            display.textContent = currentInput;
+        }
+
+        function clearDisplay() {
+            currentInput = '0';
+            display.textContent = currentInput;
+        }
+
+        function calculate() {
+            try {
+                const correctAnswer = eval(currentInput);
+                
+                // 50% chance to give a wrong answer
+                if (Math.random() < 0.5) {
+                    // Randomly select error type
+                    const errorType = Math.floor(Math.random() * 4);
+                    let wrongAnswer;
+                    
+                    switch(errorType) {
+                        case 0: // Addition error (-5 to 5)
+                            wrongAnswer = correctAnswer + (Math.random() * 10 - 5);
+                            break;
+                        case 1: // Multiplication error (0.5 to 1.5)
+                            wrongAnswer = correctAnswer * (Math.random() + 0.5);
+                            break;
+                        case 2: // Division error (divide by 1 to 3)
+                            wrongAnswer = correctAnswer / (Math.random() * 2 + 1);
+                            break;
+                        case 3: // Power error (^1 to ^2)
+                            wrongAnswer = Math.pow(correctAnswer, Math.random() + 1);
+                            break;
+                    }
+                    
+                    // Format the wrong answer
+                    if (Number.isInteger(wrongAnswer)) {
+                        display.textContent = wrongAnswer;
+                    } else {
+                        display.textContent = wrongAnswer.toFixed(2);
+                    }
+                } else {
+                    display.textContent = correctAnswer;
+                }
+                
+                shouldReset = true;
+            } catch (e) {
+                display.textContent = 'Error';
+            }
+        }
+    </script>
+</body>
+</html>
